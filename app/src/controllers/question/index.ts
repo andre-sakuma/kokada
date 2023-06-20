@@ -15,7 +15,8 @@ app.get(
 app.post(
   '/',
   funcWrapper(async (req) => {
-    const { correctAnswer, imageUrl, authorId } = req.body
+    const { correctAnswer, imageUrl } = req.body
+    const authorId = req.user.id
     const question = await getPrisma().question.create({
       data: {
         correctAnswer,
