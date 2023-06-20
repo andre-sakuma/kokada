@@ -26,7 +26,7 @@ export default class API {
       password,
     })
 
-    this.token = response.data.token
+    this.token = response.data
     this.axiosInstance.defaults.headers.common[
       'Authorization'
     ] = `Bearer ${this.token}`
