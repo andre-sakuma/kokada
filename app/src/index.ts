@@ -3,22 +3,31 @@ import * as cors from 'cors'
 import { connect, disconnect } from './service/prisma'
 
 import UserController from './controllers/user'
+import QuestionController from './controllers/question'
+import ValidationController from './controllers/validation'
+
+import AuthMiddleware from './middlewares/auth'
 
 const app = express()
 
 app.use(express.json())
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/status', (req, res) => {
+  res.send('alive')
 })
 
-app.use('/user', UserController)
+app.use('/', ValidationController)
+
+app.use('/user', AuthMiddleware, UserController)
+app.use('/question', AuthMiddleware, QuestionController)
 
 app.use((err: any, req: any, res: any, next: any) => {
-  console.log(err, 'asdasdasdasds')
-  res.status(500)
-  res.render('error', { error: err })
+  res.status(err.status || 500)
+  res.json({
+    message: err.message,
+    error: err,
+  })
 })
 
 app.listen(3000, async () => {
