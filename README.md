@@ -2,6 +2,10 @@
 
 ## Os dois processos devem estar rodando simultaneamente
 
+OBS: o usuário padrão é:
+email: "admin@admin.com"
+senha: "admin"
+
 ### Backend (/app)
 
 0. acessar a pasta do backend
