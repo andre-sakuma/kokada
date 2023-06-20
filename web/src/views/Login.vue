@@ -1,18 +1,30 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useStore } from '../store'
+
+const store = useStore()
+
+const email = ref('')
+const password = ref('')
+
+async function login() {
+  await store.login(email.value, password.value)
+}
+</script>
 
 <template>
   <div class="container">
     <div class="left">
       <div class="input">
-        <h3>usuário</h3>
-        <input type="text" />
+        <h3>email</h3>
+        <input type="text" v-model="email" />
       </div>
 
       <div class="input">
         <h3>senha</h3>
-        <input type="password" />
+        <input type="password" v-model="password" />
       </div>
-      <button class="submit">submit</button>
+      <button class="submit" @click="login()">submit</button>
     </div>
     <div class="right"></div>
   </div>

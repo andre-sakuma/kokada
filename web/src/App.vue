@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from './store'
+
 const router = useRouter()
 const route = useRoute()
+const store = useStore()
 
 const isRouterReady = ref(false)
 
 onBeforeMount(async () => {
   await router.isReady()
   isRouterReady.value = true
+  await store.init()
+
+  if (!store.isLogged()) {
+    router.push({ name: 'login' })
+  } else {
+    router.push({ name: 'home' })
+  }
 })
 const isLoginView = computed(() => route.name === 'login')
 </script>

@@ -1,10 +1,33 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useStore } from '../store'
+
+const store = useStore()
+
+const user = ref<{
+  email: string
+  name: string
+  id: string
+}>()
+
+onMounted(async () => {
+  console.log('mounted')
+  user.value = await store.me()
+})
+
+function logout() {
+  store.logout()
+}
+</script>
 
 <template>
-  <div class="container">
+  <div class="container" v-if="user">
     <h1>Dados pessoais</h1>
+    <p>nome:</p>
+    <span>{{ user.name }}</span>
     <p>email:</p>
-    <span>teste@policc.com</span>
+    <span>{{ user.email }}</span>
+    <button @click="logout()">Sair</button>
   </div>
 </template>
 
