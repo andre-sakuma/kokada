@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15.2-alpine
+    restart: always
+    container_name: policc-simulador-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=policc-simulador
+    ports:
+      - '5555:5432'
+    volumes:
+      - policc-simulador-db:/var/lib/postgresql/data
+volumes:
+  policc-simulador-db:
+    driver: local

@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  email     String     @unique
+  name      String?
+  password  String
+  questions Question[]
+  tests     Test[]
+}
+
+model Question {
+  id            Int                        @id @default(autoincrement())
+  imageUrl      String
+  correctAnswer String
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+  categories    CategoryQuestionRelation[]
+  authorId      Int
+  author        User                       @relation(fields: [authorId], references: [id])
+}
+
+model Category {
+  id        Int                        @id @default(autoincrement())
+  createdAt DateTime                   @default(now())
+  updatedAt DateTime                   @updatedAt
+  label     String
+  slug      String
+  questions CategoryQuestionRelation[]
+}
+
+model CategoryQuestionRelation {
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@unique([categoryId, questionId])
+}
+
+model Test {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  userId     Int
+  user       User       @relation(fields: [userId], references: [id])
+  startedAt  DateTime
+  finishedAt DateTime?
+  correct    Int?
+  percentage Int?
+  items      TestItem[]
+}
+
+model TestItem {
+  testId     Int
+  test       Test    @relation(fields: [testId], references: [id])
+  questionId Int
+  answer     String
+  correct    Boolean
+
+  @@unique([testId, questionId])
+}
