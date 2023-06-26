@@ -23,7 +23,7 @@ app.post(
       throw new Error('Unauthorized')
     }
 
-    return sign(user, 'superSecretKey', { expiresIn: '1h' })
+    return sign(user, 'superSecretKey', { expiresIn: '12h' })
   })
 )
 

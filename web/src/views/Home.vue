@@ -1,26 +1,54 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+</script>
 
 <template>
   <div class="container">
-    <div class="left">
-      <button class="submit">Prova obrigatória</button>
-      <button class="submit">Simulado</button>
-      <button class="submit">Upload de questões</button>
-    </div>
-    <div class="right"></div>
+    <button
+      class="submit"
+      @click="
+        router.push({
+          name: 'test-view',
+        })
+      "
+    >
+      Simulado
+    </button>
+    <button
+      class="submit"
+      @click="
+        router.push({
+          name: 'upload',
+        })
+      "
+    >
+      Upload de questões
+    </button>
   </div>
 </template>
 
 <style scoped>
 .container {
   display: flex;
+  flex-direction: column;
+  padding: 56px;
+  gap: 20px;
   width: 100%;
   height: 100%;
   background-color: var(--white);
 }
 
+@media screen and (min-width: 900px) {
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+}
+
 .left {
-  min-width: 300px;
+  min-width: 500px;
   padding: 0 32px;
   padding-top: 100px;
   display: flex;

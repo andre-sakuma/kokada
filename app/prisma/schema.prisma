@@ -17,19 +17,27 @@ model User {
   email     String     @unique
   name      String?
   password  String
+  kind      UserKind   @default(USER)
   questions Question[]
   tests     Test[]
 }
 
+enum UserKind {
+  USER
+  ADMIN
+}
+
 model Question {
   id            Int                        @id @default(autoincrement())
+  label         String
   imageUrl      String
   correctAnswer String
   createdAt     DateTime                   @default(now())
   updatedAt     DateTime                   @updatedAt
   categories    CategoryQuestionRelation[]
   authorId      Int
-  author        User                       @relation(fields: [authorId], references: [id])
+  author        User?                      @relation(fields: [authorId], references: [id])
+  TestItem      TestItem[]
 }
 
 model Category {
@@ -52,11 +60,12 @@ model CategoryQuestionRelation {
 
 model Test {
   id         Int        @id @default(autoincrement())
+  label      String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   userId     Int
   user       User       @relation(fields: [userId], references: [id])
-  startedAt  DateTime
+  startedAt  DateTime?
   finishedAt DateTime?
   correct    Int?
   percentage Int?
@@ -65,10 +74,11 @@ model Test {
 
 model TestItem {
   testId     Int
-  test       Test    @relation(fields: [testId], references: [id])
+  test       Test     @relation(fields: [testId], references: [id])
   questionId Int
-  answer     String
-  correct    Boolean
+  question   Question @relation(fields: [questionId], references: [id])
+  answer     String?
+  correct    Boolean?
 
   @@unique([testId, questionId])
 }

@@ -7,36 +7,26 @@ const app = Router()
 app.get(
   '/',
   funcWrapper(async (req) => {
-    return {
-      createdAt: req.user.createdAt,
-      email: req.user.email,
-      id: req.user.id,
-      kind: req.user.kind,
-      name: req.user.name,
-    }
-  })
-)
-
-app.get(
-  '/list',
-  funcWrapper(async (req) => {
-    const users = await getPrisma().user.findMany()
-    return users
+    const categories = await getPrisma().category.findMany({
+      include: {
+        questions: true,
+      },
+    })
+    return categories
   })
 )
 
 app.post(
   '/',
   funcWrapper(async (req) => {
-    const { name, email, password } = req.body
-    const user = await getPrisma().user.create({
+    const { label, slug } = req.body
+    const category = await getPrisma().category.create({
       data: {
-        name,
-        email,
-        password,
+        label,
+        slug,
       },
     })
-    return user
+    return category
   })
 )
 
@@ -45,13 +35,13 @@ app.put(
   funcWrapper(async (req) => {
     const { id } = req.params
     const data = req.body
-    const user = await getPrisma().user.update({
+    const category = await getPrisma().category.update({
       where: {
         id: Number(id),
       },
       data,
     })
-    return user
+    return category
   })
 )
 
@@ -59,12 +49,12 @@ app.delete(
   '/:id',
   funcWrapper(async (req) => {
     const { id } = req.params
-    const user = await getPrisma().user.delete({
+    const category = await getPrisma().category.delete({
       where: {
         id: Number(id),
       },
     })
-    return user
+    return category
   })
 )
 

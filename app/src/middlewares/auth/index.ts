@@ -24,6 +24,6 @@ export default async function auth(
     req.user = user
     next()
   } catch (error) {
-    next(new Error('Unauthorized'))
+    next(new Error('Unauthorized ' + error.message))
   }
 }

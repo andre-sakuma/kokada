@@ -22,6 +22,31 @@ const routes = [
     path: '/perfil',
     component: () => import('src/views/Perfil.vue'),
   },
+  {
+    name: 'upload',
+    path: '/upload',
+    component: () => import('src/views/Upload.vue'),
+  },
+  {
+    name: 'test-view',
+    path: '/test',
+    component: () => import('src/views/TestsView.vue'),
+  },
+  {
+    name: 'test',
+    path: '/test/:id',
+    component: () => import('src/views/Test.vue'),
+  },
+  {
+    name: 'test-create',
+    path: '/test/create',
+    component: () => import('src/views/TestCreation.vue'),
+  },
+  {
+    name: 'test-result',
+    path: '/test/:id/result',
+    component: () => import('src/views/TestResult.vue'),
+  },
 ]
 const router = createRouter({
   history: createWebHistory(),

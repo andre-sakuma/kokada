@@ -16,8 +16,6 @@ onBeforeMount(async () => {
 
   if (!store.isLogged()) {
     router.push({ name: 'login' })
-  } else {
-    router.push({ name: 'home' })
   }
 })
 const isLoginView = computed(() => route.name === 'login')
@@ -27,9 +25,9 @@ const isLoginView = computed(() => route.name === 'login')
   <div class="view" v-if="isRouterReady">
     <div class="header" v-if="!isLoginView">
       <div class="links">
-        <a href="/police">POLICE</a>
+        <!-- <a href="/police">POLICE</a> -->
         <a href="/">MENU</a>
-        <a href="/forum">FÓRUM</a>
+        <!-- <a href="/forum">FÓRUM</a> -->
       </div>
       <div class="right-side">
         <div class="perfil-img" @click="router.push({ name: 'perfil' })"></div>
@@ -73,11 +71,13 @@ const isLoginView = computed(() => route.name === 'login')
 .view {
   display: flex;
   flex-direction: column;
+  background-color: gray;
   height: 100vh;
   width: 100%;
 }
 .content {
   flex-grow: 1;
   width: 100%;
+  overflow: hidden;
 }
 </style>

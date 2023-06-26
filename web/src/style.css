@@ -17,6 +17,10 @@
   --white: #EAF4F6;
 }
 
+html {
+  overflow: hidden;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

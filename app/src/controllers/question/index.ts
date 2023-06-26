@@ -15,13 +15,42 @@ app.get(
 app.post(
   '/',
   funcWrapper(async (req) => {
-    const { correctAnswer, imageUrl } = req.body
+    const { correctAnswer, imageUrl, categories, label } = req.body
     const authorId = req.user.id
     const question = await getPrisma().question.create({
       data: {
+        label,
         correctAnswer,
         imageUrl,
-        authorId: Number(authorId),
+        authorId,
+      },
+    })
+
+    await getPrisma().categoryQuestionRelation.createMany({
+      data: categories.map((categoryId: number) => ({
+        categoryId,
+        questionId: question.id,
+      })),
+    })
+
+    return question
+  })
+)
+
+app.get(
+  '/:id',
+  funcWrapper(async (req) => {
+    const { id } = req.params
+    const question = await getPrisma().question.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
       },
     })
     return question
