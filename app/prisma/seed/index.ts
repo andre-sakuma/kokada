@@ -18,6 +18,31 @@ async function main() {
         email: 'admin@admin.com',
         password: 'admin',
       },
+      {
+        name: 'u1',
+        email: 'u1@teste.com',
+        password: 'u1',
+      },
+      {
+        name: 'u2',
+        email: 'u2@teste.com',
+        password: 'u2',
+      },
+      {
+        name: 'u3',
+        email: 'u3@teste.com',
+        password: 'u3',
+      },
+      {
+        name: 'u4',
+        email: 'u4@teste.com',
+        password: 'u4',
+      },
+      {
+        name: 'u5',
+        email: 'u5@teste.com',
+        password: 'u5',
+      },
     ],
   })
 
@@ -58,6 +83,65 @@ async function main() {
       })
     }
   }
+
+  const normalUsers = await prisma.user.findMany({
+    where: {
+      NOT: {
+        email: 'admin@admin.com',
+      },
+    },
+  })
+
+  await prisma.$transaction(async (tx) => {
+    for (let i = 0; i < 50; i++) {
+      const randomUser =
+        normalUsers[Math.floor(Math.random() * normalUsers.length)]
+
+      const test = await tx.test.create({
+        data: {
+          label: `Test ${i + 1}`,
+          userId: randomUser.id,
+        },
+      })
+
+      const questions = await tx.question.findMany({
+        take: 15,
+        skip: Math.floor(Math.random() * 15),
+      })
+
+      const possibleAnswers = ['A', 'B', 'C', 'D', 'E']
+      const chooseRandomAnswer = () =>
+        possibleAnswers[Math.floor(Math.random() * possibleAnswers.length)]
+
+      let corrects = 0
+      await tx.testItem.createMany({
+        data: questions.map((question) => {
+          const answer = chooseRandomAnswer()
+          const isCorrect = answer === question.correctAnswer
+          if (isCorrect) {
+            corrects++
+          }
+          return {
+            questionId: question.id,
+            testId: test.id,
+            correct: isCorrect,
+            answer,
+          }
+        }),
+      })
+
+      await tx.test.update({
+        where: {
+          id: test.id,
+        },
+        data: {
+          finishedAt: new Date(),
+          correct: corrects,
+          percentage: Math.floor((corrects / 15) * 100),
+        },
+      })
+    }
+  })
 }
 main()
   .then(async () => {

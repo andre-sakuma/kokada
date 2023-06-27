@@ -24,13 +24,16 @@ const isLoginView = computed(() => route.name === 'login')
 <template>
   <div class="view" v-if="isRouterReady">
     <div class="header" v-if="!isLoginView">
-      <div class="links">
-        <!-- <a href="/police">POLICE</a> -->
-        <a href="/">MENU</a>
-        <!-- <a href="/forum">FÓRUM</a> -->
+      <div class="menu">
+        <img
+          src="https://static.wixstatic.com/media/32d0db_0b3309a327784638b09397a0a691c39c~mv2.png/v1/crop/x_0,y_0,w_1204,h_329/fill/w_156,h_43,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/logo1.png"
+        />
+        <div class="links">
+          <a href="/">MENU</a>
+        </div>
       </div>
-      <div class="right-side">
-        <div class="perfil-img" @click="router.push({ name: 'perfil' })"></div>
+      <div class="account" @click="router.push({ name: 'perfil' })">
+        <v-icon size="x-large">mdi-account</v-icon>
       </div>
     </div>
     <div class="content">
@@ -59,6 +62,15 @@ const isLoginView = computed(() => route.name === 'login')
 .links {
   display: flex;
   gap: 16px;
+}
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account {
+  cursor: pointer;
 }
 
 .header a {

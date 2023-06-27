@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import API from 'src/plugins/api'
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const api = API.useAPI()
+const router = useRouter()
 
 const correctAnswer = ref('')
 const files = ref<File[]>([])
@@ -16,7 +18,7 @@ const categories = ref<
   }[]
 >([])
 
-const selectedCategories = ref<number[]>([])
+const selectedCategories = ref<number>()
 
 onMounted(async () => {
   categories.value = await api.fetchCategories()
@@ -39,14 +41,21 @@ async function createQuestion() {
     !correctAnswer.value ||
     !uploadedImageUrl.value ||
     !selectedCategories.value
-  )
+  ) {
+    window.alert('Preencha todos os campos!')
     return
+  }
+
   await api.createQuestion(
     uploadedImageUrl.value,
     correctAnswer.value,
-    selectedCategories.value,
+    [selectedCategories.value],
     label.value
   )
+
+  window.alert('Questão criada com sucesso!')
+
+  router.push('/')
 }
 </script>
 
@@ -86,7 +95,6 @@ async function createQuestion() {
         :items="categories"
         item-title="label"
         item-value="id"
-        multiple
       ></v-autocomplete>
     </div>
 

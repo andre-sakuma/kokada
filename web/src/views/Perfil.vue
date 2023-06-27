@@ -2,7 +2,12 @@
 import { onMounted, ref } from 'vue'
 import { useStore } from '../store'
 import { Category, Test } from 'src/interfaces'
+import { DoughnutChart, BarChart } from 'vue-chart-3'
+import { Chart, registerables } from 'chart.js'
+
+Chart.register(...registerables)
 import API from 'src/plugins/api'
+import { computed } from 'vue'
 
 const store = useStore()
 const api = API.useAPI()
@@ -38,6 +43,90 @@ onMounted(async () => {
 function logout() {
   store.logout()
 }
+
+const mineVsGeneralChart = computed(() => {
+  if (!results.value) return
+  return {
+    labels: ['Notas'],
+    datasets: [
+      {
+        label: 'Minha média',
+        data: [results.value.mine.average],
+        backgroundColor: ['#0079AF'],
+      },
+      {
+        label: 'Média geral',
+        data: [results.value.average],
+        backgroundColor: ['#77CEFF'],
+      },
+    ],
+  }
+})
+
+const mineVsCategoriesChart = computed(() => {
+  if (!results.value) return
+
+  return results.value.averageByCategory.map((c) => {
+    if (!results.value) return
+    const category = results.value.mine.averageByCategory.find(
+      (cat) => cat.category.id === c.category.id
+    )
+    if (!category) return
+    return {
+      labels: [category.category.label],
+      datasets: [
+        {
+          label: 'Minha média',
+          data: [category.grade],
+          backgroundColor: ['#0079AF'],
+        },
+        {
+          label: 'Média geral',
+          data: [c.grade],
+          backgroundColor: ['#77CEFF'],
+        },
+      ],
+    }
+  })
+})
+
+const selfOverallChart = computed(() => {
+  if (!results.value) return
+  return {
+    labels: results.value.mine.averageByCategory.map((c) => c.category.label),
+    datasets: [
+      {
+        data: results.value?.mine.averageByCategory.map((c) => c.grade),
+        backgroundColor: [
+          '#77CEFF',
+          '#0079AF',
+          '#123E6B',
+          '#97B0C4',
+          '#A5C8ED',
+        ],
+      },
+    ],
+  }
+})
+
+const averageOverallChart = computed(() => {
+  if (!results.value) return
+  return {
+    labels: results.value.averageByCategory.map((c) => c.category.label),
+    datasets: [
+      {
+        data: results.value.averageByCategory.map((c) => c.grade),
+        backgroundColor: [
+          '#77CEFF',
+          '#0079AF',
+          '#123E6B',
+          '#97B0C4',
+          '#A5C8ED',
+        ],
+      },
+    ],
+  }
+})
 </script>
 
 <template>
@@ -55,27 +144,40 @@ function logout() {
         <h3>email: {{ user.email }}</h3>
       </div>
     </div>
+    <h2>Meus resultados:</h2>
     <div class="results" v-if="results">
-      <h2>Meus resultados:</h2>
-      <div class="general">
-        <h3>Minha média geral: {{ results.mine.average }}</h3>
-        <h3>Média geral: {{ results.average }}</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px">
+        <div class="chart-section">
+          <h3>Geral:</h3>
+          <BarChart v-if="mineVsGeneralChart" :chartData="mineVsGeneralChart" />
+        </div>
+        <div class="chart-section">
+          <h3>Meu desempenho por categoria:</h3>
+          <DoughnutChart
+            :height="300"
+            v-if="selfOverallChart"
+            :chartData="selfOverallChart"
+          />
+        </div>
+
+        <div class="chart-section">
+          <h3>Desempenho médio por categoria:</h3>
+          <DoughnutChart
+            :height="300"
+            v-if="averageOverallChart"
+            :chartData="averageOverallChart"
+          />
+        </div>
       </div>
-      <div class="category">
-        <h3>Média por categoria:</h3>
-        <div class="categories">
-          <div class="category" v-for="category in results.averageByCategory">
-            <h4>{{ category.category.label }}</h4>
-            <h4>Média geral: {{ category.grade }}</h4>
-            <h4>
-              Minha média:
-              {{
-                results.mine.averageByCategory.find(
-                  (c) => c.category.id === category.category.id
-                )?.grade
-              }}
-            </h4>
-          </div>
+      <h3>Média por categoria:</h3>
+      <div class="categories">
+        <div
+          class="chart-section"
+          v-if="mineVsCategoriesChart"
+          v-for="chart in mineVsCategoriesChart"
+        >
+          <h3>{{ chart?.labels[0] }}</h3>
+          <BarChart v-if="chart" :chartData="chart" />
         </div>
       </div>
     </div>
@@ -83,6 +185,21 @@ function logout() {
 </template>
 
 <style scoped>
+.results {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.chart-section {
+  margin: 0 auto;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+}
 .container {
   display: flex;
   flex-direction: column;

@@ -15,18 +15,35 @@ async function login() {
 <template>
   <div class="container">
     <div class="left">
+      <img
+        src="https://static.wixstatic.com/media/32d0db_0b3309a327784638b09397a0a691c39c~mv2.png/v1/crop/x_0,y_0,w_1204,h_329/logo1.png"
+      />
       <div class="input">
-        <h3>email</h3>
-        <input type="text" v-model="email" />
+        <v-text-field
+          label="Email"
+          v-model="email"
+          type="email"
+          color="var(--white)"
+          base-color="var(--white)"
+          variant="outlined"
+        ></v-text-field>
       </div>
 
       <div class="input">
-        <h3>senha</h3>
-        <input type="password" v-model="password" />
+        <v-text-field
+          label="Senha"
+          v-model="password"
+          type="password"
+          color="var(--white)"
+          base-color="var(--white)"
+          variant="outlined"
+        ></v-text-field>
       </div>
       <button class="submit" @click="login()">submit</button>
     </div>
-    <div class="right"></div>
+    <div class="right">
+      <div class="mask"></div>
+    </div>
   </div>
 </template>
 
@@ -37,10 +54,23 @@ async function login() {
   height: 100%;
 }
 
+.right {
+  background-image: url('https://cdn.discordapp.com/attachments/990312216123293736/1123245317891051561/pexels-fauxels-3184292.jpg');
+  background-size: cover;
+}
+
+.mask {
+  background-color: var(--blue);
+  opacity: 0.8;
+  width: 100%;
+  height: 100%;
+}
+
 .left {
-  min-width: 300px;
+  max-width: 25%;
+  min-width: 400px;
   padding: 0 32px;
-  padding-top: 100px;
+  padding-top: 60px;
   background-color: var(--blue);
   display: flex;
   flex-direction: column;
